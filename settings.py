@@ -45,5 +45,6 @@ BALL_CONFIG = {
     'position': Position(WIDTH // 2, HEIGHT // 2),
     'radius': 50,
     'color': (255, 0, 0),
-    'velocity': Velocity(7, 4)
+    'velocity': Velocity(7, 4),
+    'render_collider': True
 }

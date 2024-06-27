@@ -13,21 +13,22 @@ class Ball:
     """
     Ball Class
     """
-    pos: Position
+    initial_position: Position
     radius: int
     color: Tuple[int, int, int]
     velocity: Velocity
-    # render_collider: bool
+    render_collider: bool
 
     def __init__(self, config):
-        self.pos = config['position']
+        self.initial_position = config['position']
         self.radius = config['radius']
         self.color = config['color']
         self.velocity = config['velocity']
+        self.render_collider = config['render_collider']
 
         self.collider = pygame.Rect(
-            self.pos.x - self.radius,
-            self.pos.y - self.radius,
+            self.initial_position.x - self.radius,
+            self.initial_position.y - self.radius,
             self.radius * 2,
             self.radius * 2
         )
@@ -41,17 +42,17 @@ class Ball:
 
         """
 
-        # Update Position Tuple
-        next_pos = Position(
-            self.pos.x + self.velocity.x,
-            self.pos.y + self.velocity.y
-        )
-        self.pos = next_pos
+        # # Update Position Tuple
+        # next_pos = Position(
+        #     self.initial_position.x + self.velocity.x,
+        #     self.initial_position.y + self.velocity.y
+        # )
+        # self.initial_position = next_pos
 
-        # Move the collider as well
-        # Make the collider the main position object?
+        # Move the collider
         self.collider = self.collider.move(self.velocity.x, self.velocity.y)
 
+        # Check boundary collisions top and bottom
         if (
             self.collider.clipline(Boundary.TOP.value)
             or self.collider.clipline(Boundary.BOTTOM.value)
@@ -61,6 +62,7 @@ class Ball:
             next_speed = Velocity(self.velocity.x, self.velocity.y * -1)
             self.velocity = next_speed
 
+        # Check boundary collisions left and right
         if (
             self.collider.clipline(Boundary.LEFT.value)
             or self.collider.clipline(Boundary.RIGHT.value)
@@ -70,18 +72,18 @@ class Ball:
             next_speed = Velocity(self.velocity.x * -1, self.velocity.y)
             self.velocity = next_speed
 
-    def draw(self, screen: pygame.Surface, render_collider=True):
+    def draw(self, screen: pygame.Surface):
         """
         Draw the circle object
         """
         pygame.draw.circle(
             screen,
             self.color,
-            (int(self.pos.x), int(self.pos.y)),
+            (int(self.collider.centerx), int(self.collider.centery)),
             self.radius
         )
 
-        if render_collider:
+        if self.render_collider:
             pygame.draw.rect(
                 screen,
                 (0, 255, 0),
