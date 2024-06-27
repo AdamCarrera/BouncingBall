@@ -3,7 +3,13 @@ Main file for bouncing ball simulator
 """
 import sys
 import pygame
-from settings import WIDTH, HEIGHT, BACKGROUND_COLOR, BALL_CONFIG, Boundary
+from settings import (
+    WIDTH,
+    HEIGHT,
+    BACKGROUND_COLOR,
+    BALL_CONFIG,
+    Boundary
+)
 from ball import Ball
 
 
@@ -29,8 +35,10 @@ def main():
         for line in Boundary:
             pygame.draw.line(screen, (255, 255, 0), *line.value, 5)
 
-        ball.color = (255, 0, 0) if any(ball.collider.clipline(*line.value)
-                                        for line in Boundary) else (0, 255, 0)
+        # ball.color = RGBColor(255, 0, 0) \
+        #     if any(
+        # ball.collider.clipline(*line.value) for line in Boundary) \
+        #     else RGBColor(0, 255, 0)
 
         # for line in Boundary:
         #     clipline = ball.collider.clipline(*line.value)

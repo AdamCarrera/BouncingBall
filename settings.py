@@ -5,6 +5,8 @@ Constants for ball game
 
 from enum import Enum
 from typing import NamedTuple
+import random
+import pygame
 
 # Screen dimensions
 WIDTH, HEIGHT = 800, 600
@@ -38,13 +40,35 @@ class Velocity(NamedTuple):
     y: int
 
 
-BACKGROUND_COLOR = (0, 0, 0)
+class RGBColor(pygame.Color):
+    """
+    Extension of pygame.Color class
+
+    Contains a function for generating a new random color
+    """
+    r: float
+    g: float
+    b: float
+
+    @staticmethod
+    def random():
+        """
+        Return a randomized RGBColor object
+        """
+        return RGBColor(
+            random.randint(0, 255),
+            random.randint(0, 255),
+            random.randint(0, 255)
+        )
+
+
+BACKGROUND_COLOR = RGBColor(0, 0, 0)
 
 # Configuration for the ball
 BALL_CONFIG = {
     'position': Position(WIDTH // 2, HEIGHT // 2),
     'radius': 50,
-    'color': (255, 0, 0),
+    'color': RGBColor(255, 0, 0),
     'velocity': Velocity(7, 4),
-    'render_collider': True
+    'render_collider': False
 }

@@ -2,10 +2,9 @@
 Code for the Ball Object
 """
 from dataclasses import dataclass
-from typing import Tuple
 
 import pygame
-from settings import Boundary, Position, Velocity
+from settings import Boundary, Position, Velocity, RGBColor
 
 
 @dataclass
@@ -15,7 +14,7 @@ class Ball:
     """
     initial_position: Position
     radius: int
-    color: Tuple[int, int, int]
+    color: RGBColor
     velocity: Velocity
     render_collider: bool
 
@@ -57,7 +56,7 @@ class Ball:
             self.collider.clipline(Boundary.TOP.value)
             or self.collider.clipline(Boundary.BOTTOM.value)
         ):
-            self.color = (255, 0, 255)
+            self.color = RGBColor.random()
 
             next_speed = Velocity(self.velocity.x, self.velocity.y * -1)
             self.velocity = next_speed
@@ -67,7 +66,7 @@ class Ball:
             self.collider.clipline(Boundary.LEFT.value)
             or self.collider.clipline(Boundary.RIGHT.value)
         ):
-            self.color = (255, 0, 255)
+            self.color = RGBColor.random()
 
             next_speed = Velocity(self.velocity.x * -1, self.velocity.y)
             self.velocity = next_speed
