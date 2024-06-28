@@ -32,7 +32,7 @@ class Ball:
             self.radius * 2
         )
 
-    def move(self):
+    def move(self) -> None:
         """
         Update Position and check for collisions
 
@@ -71,7 +71,7 @@ class Ball:
             next_speed = Velocity(self.velocity.x * -1, self.velocity.y)
             self.velocity = next_speed
 
-    def draw(self, screen: pygame.Surface):
+    def draw(self, screen: pygame.Surface) -> None:
         """
         Draw the circle object
         """

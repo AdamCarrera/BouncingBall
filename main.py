@@ -4,11 +4,13 @@ Main file for bouncing ball simulator
 import sys
 import pygame
 from settings import (
+    Boundary,
+    Velocity,
     WIDTH,
     HEIGHT,
     BACKGROUND_COLOR,
     BALL_CONFIG,
-    Boundary
+    N_BALLS
 )
 from ball import Ball
 
@@ -22,7 +24,11 @@ def main():
     pygame.display.set_caption("Bouncing Ball Simulation")
     clock = pygame.time.Clock()
 
-    ball = Ball(BALL_CONFIG)
+    balls = [Ball(BALL_CONFIG) for _ in range(N_BALLS)]
+
+    for ball in balls:
+        ball.velocity = Velocity.random()
+        print(ball.velocity)
 
     running = True
     while running:
@@ -46,8 +52,9 @@ def main():
         #     if clipline:
         #         print(f"clipline: {clipline}")
 
-        ball.move()
-        ball.draw(screen)
+        for ball in balls:
+            ball.move()
+            ball.draw(screen)
 
         pygame.display.flip()
         clock.tick(60)

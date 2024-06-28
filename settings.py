@@ -39,6 +39,13 @@ class Velocity(NamedTuple):
     x: int
     y: int
 
+    @staticmethod
+    def random() -> 'Velocity':
+        """
+        return a velocity object with randomized components
+        """
+        return Velocity(random.randint(5, 10), random.randint(5, 10))
+
 
 class RGBColor(pygame.Color):
     """
@@ -51,7 +58,7 @@ class RGBColor(pygame.Color):
     b: float
 
     @staticmethod
-    def random():
+    def random() -> 'RGBColor':
         """
         Return a randomized RGBColor object
         """
@@ -68,7 +75,9 @@ BACKGROUND_COLOR = RGBColor(0, 0, 0)
 BALL_CONFIG = {
     'position': Position(WIDTH // 2, HEIGHT // 2),
     'radius': 50,
-    'color': RGBColor(255, 0, 0),
-    'velocity': Velocity(7, 4),
+    'color': RGBColor.random(),
+    'velocity': Velocity.random(),
     'render_collider': False
 }
+
+N_BALLS = 5
