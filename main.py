@@ -6,13 +6,13 @@ import pygame
 from settings import (
     Boundary,
     Velocity,
+    create_config,
     WIDTH,
     HEIGHT,
     BACKGROUND_COLOR,
-    BALL_CONFIG,
     N_BALLS
 )
-from ball import Ball
+from ball import Ball, check_collision, calculate_collision
 
 
 def main():
@@ -24,7 +24,7 @@ def main():
     pygame.display.set_caption("Bouncing Ball Simulation")
     clock = pygame.time.Clock()
 
-    balls = [Ball(BALL_CONFIG) for _ in range(N_BALLS)]
+    balls = [Ball(create_config()) for _ in range(N_BALLS)]
 
     for ball in balls:
         ball.velocity = Velocity.random()
@@ -55,6 +55,10 @@ def main():
         for ball in balls:
             ball.move()
             ball.draw(screen)
+
+            collision_pair = check_collision(balls)
+            if collision_pair:
+                calculate_collision(collision_pair[0], collision_pair[1])
 
         pygame.display.flip()
         clock.tick(60)

@@ -3,6 +3,8 @@ Code for the Ball Object
 """
 from dataclasses import dataclass
 
+from typing import Union
+from math import sqrt
 import pygame
 from settings import Boundary, Position, Velocity, RGBColor
 
@@ -40,13 +42,6 @@ class Ball:
         If the ball touches the left or right boundaries, change the x-velocity
 
         """
-
-        # # Update Position Tuple
-        # next_pos = Position(
-        #     self.initial_position.x + self.velocity.x,
-        #     self.initial_position.y + self.velocity.y
-        # )
-        # self.initial_position = next_pos
 
         # Move the collider
         self.collider = self.collider.move(self.velocity.x, self.velocity.y)
@@ -89,3 +84,53 @@ class Ball:
                 self.collider,
                 1
             )
+
+
+def check_collision(ball_list: list[Ball]) -> Union[tuple[Ball, Ball], tuple]:
+    """
+    given a list of balls, check if a ball is colliding with any of the others
+    """
+    for current_ball in ball_list:
+        other_balls = [ball for ball in ball_list
+                       if ball.collider != current_ball.collider]
+
+        for test_ball in other_balls:
+            if current_ball.collider.colliderect(test_ball.collider):
+                return (current_ball, test_ball)
+
+    return ()
+
+
+def calculate_collision(b1: Ball, b2: Ball):
+    """
+    Given a pair of colliding balls, calculate the new velocities for each
+    """
+    pos1, speed1 = b1.collider.center, b1.velocity
+    pos2, speed2 = b2.collider.center, b2.velocity
+
+    collision_normal = (pos1[0] - pos2[0], pos1[1] - pos2[1])
+    distance = sqrt(collision_normal[0]**2 + collision_normal[1]**2)
+    collision_normal = (
+        collision_normal[0] / distance,
+        collision_normal[1] / distance
+    )
+    # collision_normal = map(lambda x: x / distance, collision_normal)
+
+    relative_velocity = (speed1.x - speed2.x, speed1.y - speed2.y)
+    relative_speed = relative_velocity[0] * collision_normal[0] \
+        + relative_velocity[1] * collision_normal[1]
+
+    new_speed1 = (
+        speed1.x - relative_speed * collision_normal[0],
+        speed1.y - relative_speed * collision_normal[1]
+    )
+    new_speed2 = (
+        speed2.x + relative_speed * collision_normal[0],
+        speed2.y + relative_speed * collision_normal[1]
+    )
+
+    b1.velocity = Velocity(int(new_speed1[0]), int(new_speed1[1]))
+    b1.color = RGBColor.random()
+
+    b2.velocity = Velocity(int(new_speed2[0]), int(new_speed2[1]))
+    b2.color = RGBColor.random()
