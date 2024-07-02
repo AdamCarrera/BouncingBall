@@ -31,6 +31,17 @@ class Position(NamedTuple):
     x: int
     y: int
 
+    @staticmethod
+    def random() -> 'Position':
+        """
+        return a position object with randomized components
+        """
+
+        x_component = random.randint(50, WIDTH - 100)
+        y_component = random.randint(50, HEIGHT - 100)
+
+        return Position(x_component, y_component)
+
 
 class Velocity(NamedTuple):
     """
@@ -44,7 +55,13 @@ class Velocity(NamedTuple):
         """
         return a velocity object with randomized components
         """
-        return Velocity(random.randint(5, 10), random.randint(5, 10))
+
+        # Randomly chose an integer between 5 and 10
+        # then randomly change the sign
+        x_component = random.randint(7, 10) * random.choice([-1, 1])
+        y_component = random.randint(7, 10) * random.choice([-1, 1])
+
+        return Velocity(x_component, y_component)
 
 
 class RGBColor(pygame.Color):
@@ -71,13 +88,28 @@ class RGBColor(pygame.Color):
 
 BACKGROUND_COLOR = RGBColor(0, 0, 0)
 
-# Configuration for the ball
+# example configuration for the ball
 BALL_CONFIG = {
-    'position': Position(WIDTH // 2, HEIGHT // 2),
+    'position': Position.random(),
     'radius': 50,
     'color': RGBColor.random(),
     'velocity': Velocity.random(),
     'render_collider': False
 }
 
-N_BALLS = 5
+
+def create_config():
+    """
+    return a config dictionary for the ball class
+    """
+    return {
+        'position': Position.random(),
+        'radius': 50,
+        'color': RGBColor.random(),
+        'velocity': Velocity.random(),
+        'render_collider': True
+    }
+
+
+# Amount of balls in the simulation
+N_BALLS = 2
