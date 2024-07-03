@@ -12,7 +12,11 @@ from settings import (
     BACKGROUND_COLOR,
     N_BALLS
 )
-from ball import Ball, check_collision, calculate_collision
+from ball import (
+    Ball,
+    check_collision,
+    calculate_collision,
+)
 
 
 def main():

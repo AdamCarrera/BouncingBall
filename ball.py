@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Union
 from math import sqrt
 import pygame
-from settings import Boundary, Position, Velocity, RGBColor
+from settings import Position, Velocity, RGBColor, WIDTH, HEIGHT
 
 
 @dataclass
@@ -37,34 +37,20 @@ class Ball:
     def move(self) -> None:
         """
         Update Position and check for collisions
-
-        If the ball touches the top or bottom boundaries, change the y-velocity
-        If the ball touches the left or right boundaries, change the x-velocity
-
+        using the boundary of the collider
         """
-
-        # Move the collider
-        self.collider = self.collider.move(self.velocity.x, self.velocity.y)
+        next_position = self.collider.move(self.velocity.x, self.velocity.y)
 
         # Check boundary collisions top and bottom
-        if (
-            self.collider.clipline(Boundary.TOP.value)
-            or self.collider.clipline(Boundary.BOTTOM.value)
-        ):
-            self.color = RGBColor.random()
-
-            next_speed = Velocity(self.velocity.x, self.velocity.y * -1)
-            self.velocity = next_speed
+        if next_position.top < 0 or next_position.bottom > HEIGHT:
+            self.velocity = Velocity(self.velocity.x, self.velocity.y * -1)
 
         # Check boundary collisions left and right
-        if (
-            self.collider.clipline(Boundary.LEFT.value)
-            or self.collider.clipline(Boundary.RIGHT.value)
-        ):
-            self.color = RGBColor.random()
+        if next_position.left < 0 or next_position.right > WIDTH:
+            self.velocity = Velocity(self.velocity.x * -1, self.velocity.y)
 
-            next_speed = Velocity(self.velocity.x * -1, self.velocity.y)
-            self.velocity = next_speed
+        # Finally, update the collider position
+        self.collider = next_position
 
     def draw(self, screen: pygame.Surface) -> None:
         """
@@ -88,16 +74,16 @@ class Ball:
 
 def check_collision(ball_list: list[Ball]) -> Union[tuple[Ball, Ball], tuple]:
     """
-    given a list of balls, check if a ball is colliding with any of the others
+    Given a list of balls, check if a ball is colliding with any of the others
     """
-    for current_ball in ball_list:
-        other_balls = [ball for ball in ball_list
-                       if ball.collider != current_ball.collider]
+    for i, ball1 in enumerate(ball_list):
+        for ball2 in ball_list[i+1:]:
+            dx = ball1.collider.center[0] - ball2.collider.center[0]
+            dy = ball1.collider.center[1] - ball2.collider.center[1]
+            distance = sqrt(dx**2 + dy**2)
 
-        for test_ball in other_balls:
-            if current_ball.collider.colliderect(test_ball.collider):
-                return (current_ball, test_ball)
-
+            if distance < ball1.radius + ball2.radius:
+                return (ball1, ball2)
     return ()
 
 
