@@ -28,7 +28,7 @@ def main():
     pygame.display.set_caption("Bouncing Ball Simulation")
     clock = pygame.time.Clock()
 
-    balls = [Ball(create_config()) for _ in range(N_BALLS)]
+    balls = [Ball(create_config(i)) for i in range(N_BALLS)]
     has_collided = False
 
     for ball in balls:

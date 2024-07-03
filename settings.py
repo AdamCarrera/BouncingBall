@@ -37,8 +37,8 @@ class Position(NamedTuple):
         return a position object with randomized components
         """
 
-        x_component = random.randint(50, WIDTH - 100)
-        y_component = random.randint(50, HEIGHT - 100)
+        x_component = random.randint(50, WIDTH - 300)
+        y_component = random.randint(50, HEIGHT - 300)
 
         return Position(x_component, y_component)
 
@@ -98,12 +98,22 @@ BALL_CONFIG = {
 }
 
 
-def create_config():
+def create_config(index: int) -> dict:
     """
     return a config dictionary for the ball class
+    offset the position of the ball by index * 50
+    so that they don't overlap
     """
+
+    position = Position.random()
+
+    position = Position(
+        position.x + (index * 50),
+        position.y + (index * 50)
+    )
+
     return {
-        'position': Position.random(),
+        'position': position,
         'radius': 50,
         'color': RGBColor.random(),
         'velocity': Velocity.random(),
