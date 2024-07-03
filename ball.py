@@ -129,8 +129,8 @@ def calculate_collision(b1: Ball, b2: Ball):
         speed2.y + relative_speed * collision_normal[1]
     )
 
-    b1.velocity = Velocity(int(new_speed1[0]), int(new_speed1[1]))
+    b1.velocity = Velocity(new_speed1[0], new_speed1[1])
     b1.color = RGBColor.random()
 
-    b2.velocity = Velocity(int(new_speed2[0]), int(new_speed2[1]))
+    b2.velocity = Velocity(new_speed2[0], new_speed2[1])
     b2.color = RGBColor.random()
