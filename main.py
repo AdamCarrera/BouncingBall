@@ -25,6 +25,7 @@ def main():
     clock = pygame.time.Clock()
 
     balls = [Ball(create_config()) for _ in range(N_BALLS)]
+    has_collided = False
 
     for ball in balls:
         ball.velocity = Velocity.random()
@@ -38,27 +39,32 @@ def main():
 
         screen.fill(BACKGROUND_COLOR)
 
+        # print(balls[0].velocity)
+
         for line in Boundary:
             pygame.draw.line(screen, (255, 255, 0), *line.value, 5)
 
-        # ball.color = RGBColor(255, 0, 0) \
-        #     if any(
-        # ball.collider.clipline(*line.value) for line in Boundary) \
-        #     else RGBColor(0, 255, 0)
-
-        # for line in Boundary:
-        #     clipline = ball.collider.clipline(*line.value)
-        #     print(f"collider center: {ball.collider.center}")
-        #     if clipline:
-        #         print(f"clipline: {clipline}")
-
+        # go through each ball and check if there's a collision
+        # if there is, update speed then move
+        # if there isnt, move
         for ball in balls:
+            collision_pair = check_collision(balls)
+
+            # we only want to update the speed
+            # if we haven't collided recently
+            if collision_pair and not has_collided:
+                calculate_collision(collision_pair[0], collision_pair[1])
+                has_collided = True
+
+            # has_collided stays true until collision_pair evaluates to false
+            if collision_pair and has_collided:
+                has_collided = True
+
+            if not collision_pair:
+                has_collided = False
+
             ball.move()
             ball.draw(screen)
-
-            collision_pair = check_collision(balls)
-            if collision_pair:
-                calculate_collision(collision_pair[0], collision_pair[1])
 
         pygame.display.flip()
         clock.tick(60)
