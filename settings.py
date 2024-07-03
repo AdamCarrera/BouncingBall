@@ -47,8 +47,8 @@ class Velocity(NamedTuple):
     """
     NamedTuple for velocity with x and y components
     """
-    x: int
-    y: int
+    x: float
+    y: float
 
     @staticmethod
     def random() -> 'Velocity':
@@ -58,8 +58,8 @@ class Velocity(NamedTuple):
 
         # Randomly chose an integer between 5 and 10
         # then randomly change the sign
-        x_component = random.randint(7, 10) * random.choice([-1, 1])
-        y_component = random.randint(7, 10) * random.choice([-1, 1])
+        x_component = random.randint(5, 6) * random.choice([-1, 1])
+        y_component = random.randint(5, 6) * random.choice([-1, 1])
 
         return Velocity(x_component, y_component)
 
@@ -107,9 +107,9 @@ def create_config():
         'radius': 50,
         'color': RGBColor.random(),
         'velocity': Velocity.random(),
-        'render_collider': True
+        'render_collider': False
     }
 
 
 # Amount of balls in the simulation
-N_BALLS = 2
+N_BALLS = 6
