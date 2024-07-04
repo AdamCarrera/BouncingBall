@@ -58,8 +58,8 @@ class Velocity(NamedTuple):
 
         # Randomly chose an integer between 5 and 10
         # then randomly change the sign
-        x_component = random.randint(5, 6) * random.choice([-1, 1])
-        y_component = random.randint(5, 6) * random.choice([-1, 1])
+        x_component = random.randint(3, 5) * random.choice([-1, 1])
+        y_component = random.randint(3, 5) * random.choice([-1, 1])
 
         return Velocity(x_component, y_component)
 
@@ -105,16 +105,15 @@ def create_config(index: int) -> dict:
     so that they don't overlap
     """
 
-    position = Position.random()
-
+    radius = 20
     position = Position(
-        position.x + (index * 50),
-        position.y + (index * 50)
+        (index + 1) * radius * 2,
+        (index + 1) * radius * 2
     )
 
     return {
         'position': position,
-        'radius': 50,
+        'radius': radius,
         'color': RGBColor.random(),
         'velocity': Velocity.random(),
         'render_collider': False
@@ -122,4 +121,4 @@ def create_config(index: int) -> dict:
 
 
 # Amount of balls in the simulation
-N_BALLS = 6
+N_BALLS = 20
