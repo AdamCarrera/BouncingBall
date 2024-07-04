@@ -5,7 +5,6 @@ import sys
 import pygame
 from settings import (
     Boundary,
-    Velocity,
     create_config,
     WIDTH,
     HEIGHT,
@@ -15,6 +14,7 @@ from settings import (
 from ball import (
     Ball,
     check_collision,
+    check_boundary_collision,
     calculate_collision,
 )
 
@@ -29,11 +29,6 @@ def main():
     clock = pygame.time.Clock()
 
     balls = [Ball(create_config(i)) for i in range(N_BALLS)]
-    has_collided = False
-
-    for ball in balls:
-        ball.velocity = Velocity.random()
-        print(ball.velocity)
 
     running = True
     while running:
@@ -43,30 +38,28 @@ def main():
 
         screen.fill(BACKGROUND_COLOR)
 
-        # print(balls[0].velocity)
-
         for line in Boundary:
             pygame.draw.line(screen, (255, 255, 0), *line.value, 5)
 
         # go through each ball and check if there's a collision
-        # if there is, update speed then move
+        # if there is, calculate speed then move
         # if there isnt, move
-        for ball in balls:
+        for i, ball in enumerate(balls):
+
+            wall_collision = check_boundary_collision(ball)
+            if wall_collision:
+                continue
+
             collision_pair = check_collision(balls)
 
-            # we only want to update the speed
-            # if we haven't collided recently
-            if collision_pair and not has_collided:
+            if collision_pair:
+
                 calculate_collision(collision_pair[0], collision_pair[1])
-                has_collided = True
 
-            # has_collided stays true until collision_pair evaluates to false
-            if collision_pair and has_collided:
-                has_collided = True
+                collision_pair[0].move()
+                collision_pair[1].move()
 
-            if not collision_pair:
-                has_collided = False
-
+            check_boundary_collision(ball)
             ball.move()
             ball.draw(screen)
 

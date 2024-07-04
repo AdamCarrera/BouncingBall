@@ -39,18 +39,8 @@ class Ball:
         Update Position and check for collisions
         using the boundary of the collider
         """
-        next_position = self.collider.move(self.velocity.x, self.velocity.y)
 
-        # Check boundary collisions top and bottom
-        if next_position.top < 0 or next_position.bottom > HEIGHT:
-            self.velocity = Velocity(self.velocity.x, self.velocity.y * -1)
-
-        # Check boundary collisions left and right
-        if next_position.left < 0 or next_position.right > WIDTH:
-            self.velocity = Velocity(self.velocity.x * -1, self.velocity.y)
-
-        # Finally, update the collider position
-        self.collider = next_position
+        self.collider = self.collider.move(self.velocity.x, self.velocity.y)
 
     def draw(self, screen: pygame.Surface) -> None:
         """
@@ -87,6 +77,41 @@ def check_collision(ball_list: list[Ball]) -> Union[tuple[Ball, Ball], tuple]:
     return ()
 
 
+def check_boundary_collision(ball: Ball) -> bool:
+    """
+    Check if the ball is colliding with the boundaries of the screen
+    """
+    next_position = ball.collider.move(ball.velocity.x, ball.velocity.y)
+
+    # Check boundary collisions top and bottom
+    if next_position.top < 0:
+        ball.collider.centery = 0 + ball.radius
+        ball.velocity = Velocity(ball.velocity.x, ball.velocity.y * -1)
+        ball.color = RGBColor.random()
+        return True
+
+    if next_position.bottom > HEIGHT:
+        ball.collider.centery = HEIGHT - ball.radius
+        ball.velocity = Velocity(ball.velocity.x, ball.velocity.y * -1)
+        ball.color = RGBColor.random()
+        return True
+
+    # Check boundary collisions left and right
+    if next_position.left < 0:
+        ball.collider.centerx = 0 + ball.radius
+        ball.velocity = Velocity(ball.velocity.x * -1, ball.velocity.y)
+        ball.color = RGBColor.random()
+        return True
+
+    if next_position.right > WIDTH:
+        ball.collider.centerx = WIDTH - ball.radius
+        ball.velocity = Velocity(ball.velocity.x * -1, ball.velocity.y)
+        ball.color = RGBColor.random()
+        return True
+
+    return False
+
+
 def calculate_collision(b1: Ball, b2: Ball):
     """
     Given a pair of colliding balls, calculate the new velocities for each
@@ -120,3 +145,11 @@ def calculate_collision(b1: Ball, b2: Ball):
 
     b2.velocity = Velocity(new_speed2[0], new_speed2[1])
     b2.color = RGBColor.random()
+
+    # check if the balls are still colliding
+    # if they are, move them apart
+    while sqrt((b1.collider.center[0] - b2.collider.center[0])**2
+               + (b1.collider.center[1] - b2.collider.center[1])**2) \
+            < b1.radius + b2.radius:
+        b1.move()
+        b2.move()
