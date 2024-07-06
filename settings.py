@@ -58,8 +58,8 @@ class Velocity(NamedTuple):
 
         # Randomly chose an integer between 5 and 10
         # then randomly change the sign
-        x_component = random.randint(3, 5) * random.choice([-1, 1])
-        y_component = random.randint(3, 5) * random.choice([-1, 1])
+        x_component = random.randint(1, 5) * random.choice([-1, 1])
+        y_component = random.randint(1, 5) * random.choice([-1, 1])
 
         return Velocity(x_component, y_component)
 
@@ -80,9 +80,9 @@ class RGBColor(pygame.Color):
         Return a randomized RGBColor object
         """
         return RGBColor(
-            random.randint(0, 255),
-            random.randint(0, 255),
-            random.randint(0, 255)
+            random.randint(100, 255),
+            random.randint(100, 255),
+            random.randint(100, 255)
         )
 
 
@@ -98,7 +98,7 @@ BALL_CONFIG = {
 }
 
 
-def create_config(index: int) -> dict:
+def create_random_config(index: int) -> dict:
     """
     return a config dictionary for the ball class
     offset the position of the ball by index * 50
@@ -106,10 +106,22 @@ def create_config(index: int) -> dict:
     """
 
     radius = 20
-    position = Position(
-        (index + 1) * radius * 2,
-        (index + 1) * radius * 2
-    )
+
+    if index < 10:
+        position = Position(
+            100 + (index + 1) * radius * 2,
+            200
+        )
+    elif index < 20:
+        position = Position(
+            100 + (index - 10 + 1) * radius * 2,
+            300
+        )
+    else:
+        position = Position(
+            100 + (index - 20 + 1) * radius * 2,
+            400
+        )
 
     return {
         'position': position,
@@ -120,5 +132,30 @@ def create_config(index: int) -> dict:
     }
 
 
+def create_test_config(index: int) -> dict:
+    """
+    return a config dictionary for the ball class
+    that can be used for testing and debugging
+    """
+
+    vel = 3
+
+    radius = 50
+    if index % 2 == 0:
+        position = Position((index + 1) * 200, 400)
+        velocity = Velocity(vel + 3.5, 0)
+    else:
+        position = Position((index + 1) * 200, 400)
+        velocity = Velocity(vel, 0)
+
+    return {
+        'position': position,
+        'radius': radius,
+        'color': RGBColor(255, 0, 0),
+        'velocity': velocity,
+        'render_collider': True
+    }
+
+
 # Amount of balls in the simulation
-N_BALLS = 20
+N_BALLS = 15
