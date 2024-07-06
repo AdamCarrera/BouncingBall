@@ -34,6 +34,9 @@ class Ball:
             self.radius * 2
         )
 
+    def __repr__(self) -> str:
+        return f"Position: {self.collider.center}"
+
     def move(self) -> None:
         """
         Update Position and check for collisions
@@ -125,31 +128,45 @@ def calculate_collision(b1: Ball, b2: Ball):
         collision_normal[0] / distance,
         collision_normal[1] / distance
     )
-    # collision_normal = map(lambda x: x / distance, collision_normal)
 
     relative_velocity = (speed1.x - speed2.x, speed1.y - speed2.y)
     relative_speed = relative_velocity[0] * collision_normal[0] \
         + relative_velocity[1] * collision_normal[1]
 
-    new_speed1 = (
+    # if the relative speed is negative
+    # then the balls are moving away from each other
+    # and we don't need to do anything
+    if relative_speed > 0:
+        return
+
+    new_speed1 = Velocity(
         speed1.x - relative_speed * collision_normal[0],
         speed1.y - relative_speed * collision_normal[1]
     )
-    new_speed2 = (
+    new_speed2 = Velocity(
         speed2.x + relative_speed * collision_normal[0],
         speed2.y + relative_speed * collision_normal[1]
     )
 
-    b1.velocity = Velocity(new_speed1[0], new_speed1[1])
+    b1.velocity = new_speed1
     b1.color = RGBColor.random()
 
-    b2.velocity = Velocity(new_speed2[0], new_speed2[1])
+    b2.velocity = new_speed2
     b2.color = RGBColor.random()
 
-    # check if the balls are still colliding
-    # if they are, move them apart
-    while sqrt((b1.collider.center[0] - b2.collider.center[0])**2
-               + (b1.collider.center[1] - b2.collider.center[1])**2) \
-            < b1.radius + b2.radius:
-        b1.move()
-        b2.move()
+    next_distance = sqrt(
+        (pos1[0] + new_speed1.x - pos2[0] - new_speed2.x)**2
+        + (pos1[1] + new_speed1.y - pos2[1] - new_speed2.y)**2
+    )
+
+    # Overlap Handling
+    if next_distance < b1.radius + b2.radius:
+        overlap = b1.radius + b2.radius - distance
+        b1.collider = b1.collider.move(
+            overlap * collision_normal[0],
+            overlap * collision_normal[1]
+        )
+        b2.collider = b2.collider.move(
+            -overlap * collision_normal[0],
+            -overlap * collision_normal[1]
+        )

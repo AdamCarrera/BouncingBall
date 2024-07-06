@@ -5,7 +5,7 @@ import sys
 import pygame
 from settings import (
     Boundary,
-    create_config,
+    create_random_config,
     WIDTH,
     HEIGHT,
     BACKGROUND_COLOR,
@@ -28,7 +28,7 @@ def main():
     pygame.display.set_caption("Bouncing Ball Simulation")
     clock = pygame.time.Clock()
 
-    balls = [Ball(create_config(i)) for i in range(N_BALLS)]
+    balls = [Ball(create_random_config(i)) for i in range(N_BALLS)]
 
     running = True
     while running:
@@ -58,13 +58,16 @@ def main():
 
                 collision_pair[0].move()
                 collision_pair[1].move()
+                continue
 
-            check_boundary_collision(ball)
+            # check_boundary_collision(ball)
             ball.move()
+
+        for ball in balls:
             ball.draw(screen)
 
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(6000)
 
     pygame.quit()
     sys.exit()
