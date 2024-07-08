@@ -3,10 +3,18 @@ Code for the Ball Object
 """
 from dataclasses import dataclass
 
-from typing import Union
+from typing import Optional
 from math import sqrt
 import pygame
-from settings import Position, Velocity, RGBColor, WIDTH, HEIGHT
+from settings import (
+    Position,
+    Velocity,
+    RGBColor,
+    WIDTH,
+    HEIGHT
+)
+
+BallPair = tuple['Ball', 'Ball']
 
 
 @dataclass
@@ -65,19 +73,22 @@ class Ball:
             )
 
 
-def check_collision(ball_list: list[Ball]) -> Union[tuple[Ball, Ball], tuple]:
+def check_collision(ball: Ball, ball_list: list[Ball]) -> Optional[BallPair]:
     """
-    Given a list of balls, check if a ball is colliding with any of the others
+    Given a list of balls, check if the given ball
+    is colliding with any of the others
     """
-    for i, ball1 in enumerate(ball_list):
-        for ball2 in ball_list[i+1:]:
-            dx = ball1.collider.center[0] - ball2.collider.center[0]
-            dy = ball1.collider.center[1] - ball2.collider.center[1]
-            distance = sqrt(dx**2 + dy**2)
+    for other_ball in ball_list:
+        if ball == other_ball:
+            continue
 
-            if distance < ball1.radius + ball2.radius:
-                return (ball1, ball2)
-    return ()
+        dx = ball.collider.center[0] - other_ball.collider.center[0]
+        dy = ball.collider.center[1] - other_ball.collider.center[1]
+        distance = sqrt(dx**2 + dy**2)
+
+        if distance < ball.radius + other_ball.radius:
+            return (ball, other_ball)
+    return None
 
 
 def check_boundary_collision(ball: Ball) -> bool:
@@ -161,7 +172,9 @@ def calculate_collision(b1: Ball, b2: Ball):
 
     # Overlap Handling
     if next_distance < b1.radius + b2.radius:
+
         overlap = b1.radius + b2.radius - distance
+
         b1.collider = b1.collider.move(
             overlap * collision_normal[0],
             overlap * collision_normal[1]
