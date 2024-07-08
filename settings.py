@@ -9,7 +9,7 @@ import random
 import pygame
 
 # Screen dimensions
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 1920, 1080
 CENTER_X = WIDTH // 2
 CENTER_Y = HEIGHT // 2
 
@@ -58,8 +58,8 @@ class Velocity(NamedTuple):
 
         # Randomly chose an integer between 5 and 10
         # then randomly change the sign
-        x_component = random.randint(1, 5) * random.choice([-1, 1])
-        y_component = random.randint(1, 5) * random.choice([-1, 1])
+        x_component = random.randint(5, 6) * random.choice([-1, 1])
+        y_component = random.randint(5, 6) * random.choice([-1, 1])
 
         return Velocity(x_component, y_component)
 
@@ -98,30 +98,19 @@ BALL_CONFIG = {
 }
 
 
-def create_random_config(index: int) -> dict:
+def create_random_config(i, j) -> dict:
     """
     return a config dictionary for the ball class
     offset the position of the ball by index * 50
     so that they don't overlap
     """
 
-    radius = 20
+    radius = 40
 
-    if index < 10:
-        position = Position(
-            100 + (index + 1) * radius * 2,
-            200
-        )
-    elif index < 20:
-        position = Position(
-            100 + (index - 10 + 1) * radius * 2,
-            300
-        )
-    else:
-        position = Position(
-            100 + (index - 20 + 1) * radius * 2,
-            400
-        )
+    position = Position(
+        (j + 1) * (25 + 2 * radius),
+        (i + 1) * (25 + 2 * radius)
+    )
 
     return {
         'position': position,
@@ -142,10 +131,10 @@ def create_test_config(index: int) -> dict:
 
     radius = 50
     if index % 2 == 0:
-        position = Position((index + 1) * 200, 400)
-        velocity = Velocity(vel + 3.5, 0)
+        position = Position((index + 1) * 125, 400)
+        velocity = Velocity(vel + 3, 0)
     else:
-        position = Position((index + 1) * 200, 400)
+        position = Position((index + 1) * 125, 401)
         velocity = Velocity(vel, 0)
 
     return {
@@ -158,4 +147,6 @@ def create_test_config(index: int) -> dict:
 
 
 # Amount of balls in the simulation
-N_BALLS = 15
+N_BALLS = 10
+N_ROWS = 10
+N_COLS = 10

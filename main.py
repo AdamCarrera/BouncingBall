@@ -9,7 +9,8 @@ from settings import (
     WIDTH,
     HEIGHT,
     BACKGROUND_COLOR,
-    N_BALLS
+    N_ROWS,
+    N_COLS
 )
 from ball import (
     Ball,
@@ -28,7 +29,9 @@ def main():
     pygame.display.set_caption("Bouncing Ball Simulation")
     clock = pygame.time.Clock()
 
-    balls = [Ball(create_random_config(i)) for i in range(N_BALLS)]
+    balls = [Ball(create_random_config(i, j))
+             for i in range(N_ROWS)
+             for j in range(N_COLS)]
 
     running = True
     while running:
@@ -42,32 +45,28 @@ def main():
             pygame.draw.line(screen, (255, 255, 0), *line.value, 5)
 
         # go through each ball and check if there's a collision
-        # if there is, calculate speed then move
-        # if there isnt, move
-        for i, ball in enumerate(balls):
+        # if there is, calculate speeds and directions
+        # modify them in place
 
+        for ball in balls:
             wall_collision = check_boundary_collision(ball)
             if wall_collision:
                 continue
 
-            collision_pair = check_collision(balls)
-
-            if collision_pair:
-
+            collision_pair = check_collision(ball, balls)
+            if collision_pair and ball in collision_pair:
                 calculate_collision(collision_pair[0], collision_pair[1])
-
-                collision_pair[0].move()
-                collision_pair[1].move()
                 continue
 
-            # check_boundary_collision(ball)
-            ball.move()
+        # After all of the collisions have been checked
+        # move the balls and draw them
 
         for ball in balls:
+            ball.move()
             ball.draw(screen)
 
         pygame.display.flip()
-        clock.tick(6000)
+        clock.tick(60)
 
     pygame.quit()
     sys.exit()
